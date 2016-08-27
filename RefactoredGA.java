@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class RefactoredGA {
-
+	private static Population currentPopulation;
 	// fitness value file
 	private static int StoppingCondition = 0;
 	
@@ -20,33 +20,12 @@ public class RefactoredGA {
 	private static Scanner scan;
 	private static File fitFile;
 
-	// key = chromosome, value = time
-	static Map<String, Double> bestChromosomesMap;
-	// key = chromosome, value = iteration
-	static Map<String, Integer> iterationChromosomeMap;
-
-	// chromosome/solution/genotype
-	private static int numAgents = 10;
-	// population size
-	private static int popSize;
-
 	public static int fitnessValue = 0;
-	private static int iterations = 250;
-	// mutation rate, change it have a play-- compare it with random number
-	private static double mutRate = 0.01;
-	private static double initMutRate;
-	private static double XORate = 0.7;
-	// the number of runs used to define convergence if a new solution is not found
-	private static int convergenceFactor = 100;
-
-	// the chromosomes array, 10 members, 7 agents each
-	private static int[][] population;
 
 	static Random rand = new Random();
-	private static double[] popmember;
-	private static double winnerSimilarityRatio = 0.55;
 
 	public static void main(String[] args) throws Exception {
+		currentPopulation = new Population();
 		// bestChromosomesMap = new HashMap<String, Double>();
 		// iterationChromosomeMap = new HashMap<>();
 		// boolean allowDupWorkers = true;
@@ -62,15 +41,10 @@ public class RefactoredGA {
 			currentLine = inputScanner.nextLine();
 			lineParser = new Scanner(currentLine);
 			
-			popSize = Integer.parseInt(lineParser.next());
-			population = new int[popSize][numAgents];
-			popmember = new double[popSize];
-			XORate = Float.parseFloat(lineParser.next());
-			mutRate = Float.parseFloat(lineParser.next());
-			initMutRate = mutRate;
+			currentPopulation.setSize(Integer.parseInt(lineParser.next()));
+			currentPopulation.setCrossover(Float.parseFloat(lineParser.next()));
+			currentPopulation.setMutation(Float.parseFloat(lineParser.next()));
 			
-			bestChromosomesMap = new HashMap<String, Double>();
-			iterationChromosomeMap = new HashMap<>();
 			boolean allowDupWorkers = true;
 			boolean batch = false;
 			runGA(allowDupWorkers, batch);
