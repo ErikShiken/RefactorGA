@@ -43,7 +43,7 @@ public class RefactoredGA {
 			
 			currentPopulation.setSize(Integer.parseInt(lineParser.next()));
 			currentPopulation.setCrossover(Float.parseFloat(lineParser.next()));
-			currentPopulation.setMutation(Float.parseFloat(lineParser.next()));
+			currentPopulation.setInitMutation(Float.parseFloat(lineParser.next()));
 			
 			boolean allowDupWorkers = true;
 			boolean batch = false;
@@ -60,24 +60,33 @@ public class RefactoredGA {
 			inputScanner.close();
 	}
 
-	private static void printResults() throws IOException {
+	private static File createResultsFile(int popSize, double XORate, double initMutRate) {
 		Calendar cal = Calendar.getInstance();
-		StringBuilder output = new StringBuilder("output_");
-		output.append(popSize);
-		output.append("_");
-		output.append(String.format("%.2f_", XORate));
+		StringBuilder output = new StringBuilder(popSize);
+		output.append(String.format("_%.2f_", XORate));
 		output.append(String.format("%.2f_", initMutRate));
+		
 		String dfn = "yy.MM.dd.HH.mm.ss";
 		SimpleDateFormat sdf = new SimpleDateFormat(dfn);
 		output.append(sdf.format(cal.getTime()));
-		File newOutput = new File(output.toString());
+		
+		return new File(output.toString());
+	}
+	
+	private static void printResults() throws IOException {
+		File newOutput = 
+			createResultsFile(
+				currentPopulation.getSize(), 
+				currentPopulation.getCrossover(),
+				currentPopulation.getInitMutation());
+		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(newOutput));
 		double smallest = Double.MAX_VALUE;
 		double value;
 		String best = "";
-		for (String chromosome : bestChromosomesMap.keySet()) {
+		for (String chromosome : currentPopulation.getBestChromosomes()) {
 			bw.write(String.format("%s : ", chromosome));
-			value = bestChromosomesMap.get(chromosome);
+			value = currentPopulation.getBestChromosomeTime(chromosome);
 			bw.write(String.format("%f : ", value));
 			bw.write(String.format("%d", iterationChromosomeMap.get(chromosome).intValue()));
 			bw.newLine();

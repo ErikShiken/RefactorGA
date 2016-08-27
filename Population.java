@@ -4,6 +4,7 @@ import java.util.Map;
 public class Population {
 	private int iterations;
 	private double mutation;
+	private double initMutation;
 	private double crossover;
 	private int convergence;
 	private double similarity;
@@ -22,6 +23,14 @@ public class Population {
 		iterationChromosomeMap = new HashMap<>();
 	}
 
+	public Iterable<String> getBestChromosomes() {
+		return bestChromosomesMap.keySet();
+	}
+	
+	public Double getBestChromosomeTime(String chromosome) {
+		return bestChromosomesMap.get(chromosome);
+	}
+	
 	public Map<String, Double> getBest() {
 		return bestChromosomesMap;
 	}
@@ -154,5 +163,20 @@ public class Population {
 	 */
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+	/**
+	 * @return the initMutation
+	 */
+	public double getInitMutation() {
+		return initMutation;
+	}
+
+	/**
+	 * @param initMutation the initMutation to set
+	 */
+	public void setInitMutation(double initMutation) {
+		this.initMutation = initMutation;
+		this.mutation = initMutation;
 	}
 }
