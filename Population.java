@@ -39,6 +39,10 @@ public class Population {
 		return iterationChromosomeMap;
 	}
 	
+	public Integer getChromosomeIteration(String chromosome) {
+		return iterationChromosomeMap.get(chromosome);
+	}
+	
 	/**
 	 * @return the iterations
 	 */
@@ -178,5 +182,29 @@ public class Population {
 	public void setInitMutation(double initMutation) {
 		this.initMutation = initMutation;
 		this.mutation = initMutation;
+	}
+
+	public String getBestOverallChromosome() {
+		double value = 0f;
+		double smallest = Double.MAX_VALUE;
+		String best = "";
+		for (String chromosome : getBestChromosomes()) {
+			value = getBestChromosomeTime(chromosome);
+
+			if (value < smallest) {
+				smallest = value;
+				best = chromosome;
+			} else if (value == smallest && iterationChromosomeMap.get(chromosome) < iterationChromosomeMap.get(best)) {
+				best = chromosome;
+			}
+		}
+		
+		return best;
+	}
+
+	public void addBestChromosome(String chromosome, Double bestTime) {
+		// do not overwrite the original time seen for this chromosome
+		if(bestChromosomesMap.get(chromosome) == null)
+			this.bestChromosomesMap.put(chromosome, bestTime);
 	}
 }

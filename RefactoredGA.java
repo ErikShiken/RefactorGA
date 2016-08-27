@@ -48,7 +48,7 @@ public class RefactoredGA {
 			boolean allowDupWorkers = true;
 			boolean batch = false;
 			runGA(allowDupWorkers, batch);
-			printResults();
+			printResultsToFile();
 			
 			if(scan != null)
 				scan.close();
@@ -73,42 +73,50 @@ public class RefactoredGA {
 		return new File(output.toString());
 	}
 	
-	private static void printResults() throws IOException {
+	private static String getBestResults() {
+		StringBuffer results = new StringBuffer();
+		for (String chromosome : currentPopulation.getBestChromosomes()) {
+			results.append(String.format("%s : ", chromosome));
+			results.append(String.format("%f : ", currentPopulation.getBestChromosomeTime(chromosome)));
+			results.append(String.format("%d", currentPopulation.getChromosomeIteration(chromosome)));
+			results.append(System.getProperty("line.separator"));
+		}
+		
+		results.append(String.format("XORate = %f", currentPopulation.getCrossover()));
+		results.append(System.getProperty("line.separator"));
+		
+		results.append(String.format("mutRate = %f", currentPopulation.getMutation()));
+		results.append(System.getProperty("line.separator"));
+		
+		return results.toString();
+	}
+	
+	private static void printToFile(File output) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(output));
+		
+		String bestChromosomeResults = getBestResults();
+
+		String best = currentPopulation.getBestOverallChromosome();
+				
+		bw.write(bestChromosomeResults);
+		bw.write(String.format("Best chromosome : %s : Iteration = %d : Score = %f : mutRate = %f", 
+				best, currentPopulation.getChromosomeIteration(best), 
+				currentPopulation.getBestChromosomeTime(best), 
+				currentPopulation.getMutation()));
+		bw.newLine();
+		bw.flush();
+		bw.close();
+
+	}
+	
+	private static void printResultsToFile() throws IOException {
 		File newOutput = 
 			createResultsFile(
 				currentPopulation.getSize(), 
 				currentPopulation.getCrossover(),
 				currentPopulation.getInitMutation());
 		
-		BufferedWriter bw = new BufferedWriter(new FileWriter(newOutput));
-		double smallest = Double.MAX_VALUE;
-		double value;
-		String best = "";
-		for (String chromosome : currentPopulation.getBestChromosomes()) {
-			bw.write(String.format("%s : ", chromosome));
-			value = currentPopulation.getBestChromosomeTime(chromosome);
-			bw.write(String.format("%f : ", value));
-			bw.write(String.format("%d", iterationChromosomeMap.get(chromosome).intValue()));
-			bw.newLine();
-
-			if (value < smallest) {
-				smallest = value;
-				best = chromosome;
-			} else if (value == smallest && iterationChromosomeMap.get(chromosome) < iterationChromosomeMap.get(best)) {
-				best = chromosome;
-			}
-		}
-
-		bw.write(String.format("XORate = %f", XORate));
-		bw.newLine();
-		bw.write(String.format("mutRate = %f", mutRate));
-		bw.newLine();
-		
-		bw.write(String.format("Best chromosome : %s : Iteration = %d : Score = %f : mutRate = %f", 
-				best, iterationChromosomeMap.get(best).intValue(), bestChromosomesMap.get(best), mutRate));
-		bw.newLine();
-		bw.flush();
-		bw.close();
+		printToFile(newOutput);
 	}
 
 	public static void runGA(boolean allowDupGenes, boolean batch) throws Exception {
@@ -117,12 +125,10 @@ public class RefactoredGA {
 		String path = "C:\\Users\\etest\\Desktop\\AirInterdiction\\";
 		runSetup(path, allowDupGenes, batch);
 
-		// begin loop
-		int runs = iterations;
 		// convergentRun keeps track of how many iterations have occurred where a new
 		// solution has not been found
 		int convergentRun = 0;
-		for (int loop = 0; loop < runs; loop++) {
+		for (int loop = 0; loop < currentPopulation.getIterations(); loop++) {
 			if(loop % 100 == 0) System.out.println("loop = " + loop);
 			
 			double largestFitness = Double.MIN_VALUE;
