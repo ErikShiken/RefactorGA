@@ -35,4 +35,14 @@ public class PopulationTest {
 		
 		Assert.assertTrue(current.getBestOverallChromosome().equalsIgnoreCase(chromosome));
 	}
+
+    @Test
+    public void testUpdateBestOverallCreateNewBest() {
+        String chromosome = "1,2,3,4,5,6,7,8,9";
+        Double bestTime = 200d;
+
+        current.updateBestOverall(chromosome, bestTime);
+
+        Assert.assertEquals("Current best mismatch", current.getBestOverallChromosome(), chromosome);
+    }
 }

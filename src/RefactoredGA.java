@@ -137,8 +137,8 @@ public class RefactoredGA {
 			int winner = -1;
 
 			Scanner fitnessScanner = new Scanner(fitFile);
-			for (int i = 0; i < popSize; i++) {
-				popmember[i] = fitnessScanner.nextDouble();
+            for (int i = 0; i < currentPopulation.getSize(); i++) {
+                popmember[i] = fitnessScanner.nextDouble();
 				if (popmember[i] > largestFitness) {
 					largestFitness = popmember[i];
 					loser = i;
@@ -162,18 +162,18 @@ public class RefactoredGA {
 			if (popmember[winner] < StoppingCondition) {
 				System.out.println("Stopping condition reached");
 				break;
-			} else if (convergentRun >= convergenceFactor) {
-				System.out.println("GA has converged based on the given convergenceFactor ("
-						+ convergenceFactor + ")");
-				break;
-			} else if (convergentRun == convergenceFactor / 2) {
-				mutRate += 0.01;
-				System.out.println("mutRate updated : " + mutRate);
-			}
+            } else if (convergentRun >= currentPopulation.getConvergence()) {
+                System.out.println("GA has converged based on the given convergenceFactor ("
+                        + currentPopulation.getConvergence() + ")");
+                break;
+            } else if (convergentRun == currentPopulation.getConvergence() / 2) {
+                currentPopulation.increaseMutationRate(0.01);
+                System.out.println("mutRate updated : " + currentPopulation.getConvergence());
+            }
 
-			for (int i = 0; i < popSize; i++) {
-				if (rand.nextDouble() < XORate) {
-					reproduction(getWinners(), loser, allowDupGenes);
+            for (int i = 0; i < currentPopulation.getSize(); i++) {
+                if (rand.nextDouble() < currentPopulation.getCrossover()) {
+                    reproduction(getWinners(), loser, allowDupGenes);
 				}
 			}
 
@@ -181,7 +181,7 @@ public class RefactoredGA {
 			mutate(winner);
 
 			if (batch) {
-				writeNewPopulationToFile(population);
+                writeNewPopulationToFile();
 
 				runSimulation(path);
 			} else {
@@ -189,14 +189,14 @@ public class RefactoredGA {
 			}
 		}
 
-		if(convergentRun < convergenceFactor)
-			System.out.println("GA simulation completed after " + runs + " rounds.");
-		else
+        if (convergentRun < currentPopulation.getConvergence())
+            System.out.println("GA simulation completed after " + currentPopulation.getIterations() + " rounds.");
+        else
 			System.out.println("converged");
 	}
 
-	private static void writeNewPopulationIterative(String path) throws Exception {
-		float[] averages = new float[popSize];
+    private static void writeNewPopulationIterative(String path, Integer popSize) throws Exception {
+        float[] averages = new float[popSize];
 
 		// for entire population
 		for (int i = 0; i < popSize; i++) {
@@ -234,8 +234,8 @@ public class RefactoredGA {
 		scan.close();
 	}
 
-	private static void runSetup(String path, boolean allowDupGenes, boolean batch) throws Exception {
-		if (batch) {
+    private static void runSetup(String path, boolean allowDupGenes, boolean batch, Integer popSize) throws Exception {
+        if (batch) {
 			// write population to a file
 			if (allowDupGenes) {
 				initPopulation();
@@ -276,8 +276,8 @@ public class RefactoredGA {
 		}
 	}
 
-	private static void initIterativePopulationWoDuplicates() {
-		// Agents (must be equal to numAgents)
+    private static void initIterativePopulationWoDuplicates(Integer numAgents, Integer popSize, int[][] population) {
+        // Agents (must be equal to numAgents)
 		int[] Agents = new int[numAgents];
 		for (int i = 0; i < numAgents; i++) {
 			Agents[i] = i + 1;
@@ -299,8 +299,8 @@ public class RefactoredGA {
 		}
 	}
 
-	private static void writeGeneToFile(int index) throws Exception {
-		populationOutput.delete();
+    private static void writeGeneToFile(int index, int[][] population) throws Exception {
+        populationOutput.delete();
 		populationOutput.createNewFile();
 		StringBuilder sb = new StringBuilder("");
 		FileWriter fw = new FileWriter(populationOutput);
@@ -317,8 +317,8 @@ public class RefactoredGA {
 		bw.close();
 	}
 
-	private static void initIterativePopulation() {
-		// Agents (must be equal to numAgents)
+    private static void initIterativePopulation(Integer numAgents, Integer popSize, int[][] population) {
+        // Agents (must be equal to numAgents)
 		int[] Agents = new int[numAgents];
 		for (int i = 0; i < numAgents; i++) {
 			Agents[i] = i + 1;
@@ -334,18 +334,19 @@ public class RefactoredGA {
 		}
 	}
 
-	private static int[] getWinners() {
-		int numTournament = 2;
+    private static int[] getWinners(Double winnerSimilarityRatio, int[][] population, int convergenceFactor) {
+        int numTournament = 2;
 		// winning gene positions, the start of binary selection
 		int[] winners = new int[numTournament];
 
-		double diffCount = 0;
+        int tempConverge = convergenceFactor;
+        double diffCount = 0;
 		double tempSimilarity = winnerSimilarityRatio;
 		while (diffCount / population[0].length <= tempSimilarity) {
 			if(diffCount > 0) {
 				tempSimilarity -= 0.01;
-				convergenceFactor --;
-			}
+                tempConverge--;
+            }
 			diffCount = 0.0;
 
 			int lastWinner = -1;
@@ -368,8 +369,8 @@ public class RefactoredGA {
 		return winners;
 	}
 
-	private static void mutate(int winner) {
-		int[] tempChromosome = null;
+    private static void mutate(int winner, Integer popSize, int[][] population, Double mutRate) {
+        int[] tempChromosome = null;
 		StringBuilder winnerStr = new StringBuilder();
 		for (int i = 0; i < popSize; i++) {
 			// skip this population member if it is one of the winners
@@ -394,9 +395,9 @@ public class RefactoredGA {
 			}
 		}
 	}
-	
-	private static void reproduction(int[] winners, int loser, boolean allowDup) {
-		int[] child;
+
+    private static void reproduction(int[] winners, int loser, boolean allowDup, int[][] population) {
+        int[] child;
 		if (allowDup) {
 			child = orderOneCrossover(population[winners[0]], population[winners[1]]);
 		} else {
@@ -423,8 +424,8 @@ public class RefactoredGA {
 
 	// if this winner has not been seen, add it to the bestChromosomeMap
 	// -- returns true if the map has been updated, false otherwise
-	private static boolean updateWinner(int winner, int loop) {
-		boolean updated = false;
+    private static boolean updateWinner(int winner, int loop, int[][] populaton) {
+        boolean updated = false;
 		String chromString = convertToString(population[winner]);
 		if (bestChromosomesMap.get(chromString) == null) {
 			System.out.println("adding to map : " + chromString + "(" + popmember[winner] + ") : loop = " + loop);
@@ -471,8 +472,9 @@ public class RefactoredGA {
 		return foundDup;
 	}
 
-	private static void writeNewPopulationToFile(int[][] population) throws IOException {
-		populationOutput.delete();
+    private static void writeNewPopulationToFile(int[][] population, Integer popSize, Integer numAgents)
+            throws IOException {
+        populationOutput.delete();
 		populationOutput.createNewFile();
 		StringBuilder sb = new StringBuilder("");
 		FileWriter fw = new FileWriter(populationOutput);
@@ -516,8 +518,8 @@ public class RefactoredGA {
 	}
 
 	// initialize the population and allow duplicate genes in a chromosome
-	private static void initPopulationWoDuplicates() throws IOException {
-		// Agents (must be equal to numAgents)
+    private static void initPopulationWoDuplicates(Integer numAgents, Integer popSize, int[][] population) throws IOException {
+        // Agents (must be equal to numAgents)
 		int[] Agents = new int[numAgents];
 		for (int i = 0; i < numAgents; i++) {
 			Agents[i] = i + 1;
@@ -544,8 +546,8 @@ public class RefactoredGA {
 	}
 
 	// create an initial gene without duplicate chromosomes
-	private static void initPopulation() throws IOException {
-		// Agents (must be equal to numAgents)
+    private static void initPopulation(Integer popSize, int[][] population, Integer numAgents) throws IOException {
+        // Agents (must be equal to numAgents)
 		int[] Agents = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
 		StringBuilder sb = new StringBuilder("");
@@ -700,8 +702,8 @@ public class RefactoredGA {
 		return false;
 	}
 
-	public static int selectParentUsingBinaryTournament(int lastWinner) {
-		int x = randomNumber(0, popSize);
+    public static int selectParentUsingBinaryTournament(int lastWinner, Integer popSize, int[] popmember) {
+        int x = randomNumber(0, popSize);
 		int y = randomNumber(0, popSize);
 		while (x == y || x == lastWinner || y == lastWinner) {
 			x = randomNumber(0, popSize);
@@ -719,5 +721,4 @@ public class RefactoredGA {
 		double d = min + rand.nextDouble() * (max - min);
 		return (int) d;
 	}
-
-}// END OF CLASS
+}// End RefactorGA class

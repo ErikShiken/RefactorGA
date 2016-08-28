@@ -12,13 +12,13 @@ public class Population {
 	private int[][] population;
 	private int numAgents;
 	private int size;
-	private ChromosomeTimePair bestOverallChromosome;
-	
-	// key = chromosome, value = time
+    private ChromosomeTimePair bestChromosomeOverall;
+
+    // key = chromosome, value = time
 	private Map<String, Double> bestChromosomesMap;
 	// key = chromosome, value = iteration
 	private Map<String, Integer> iterationChromosomeMap;
-	
+
 	public Population() {
 		bestChromosomesMap = new HashMap<>();
 		iterationChromosomeMap = new HashMap<>();
@@ -186,6 +186,9 @@ public class Population {
 	}
 
 	public String getBestOverallChromosome() {
+        if (bestChromosomeOverall == null)
+            return "";
+
 		return bestChromosomeOverall.getChromosome();
 	}
 
@@ -194,30 +197,34 @@ public class Population {
 		if(bestChromosomesMap.get(chromosome) == null) {
 			this.bestChromosomesMap.put(chromosome, bestTime);
 
-			updateBestOverall(bestTime);
-		}
+            updateBestOverall(chromosome, bestTime);
+        }
 	}
-	
-	public void updateBestOverall(Double bestTime) {
-		if(bestChromosomeOverall == null || bestChromosomeOverall.getTime() > bestTime)
+
+    public void updateBestOverall(String chromosome, Double bestTime) {
+        if(bestChromosomeOverall == null || bestChromosomeOverall.getTime() > bestTime)
 			bestChromosomeOverall = new ChromosomeTimePair(chromosome, bestTime);
 	}
-	
+
+    public void increaseMutationRate(Double v) {
+        this.mutation += v;
+    }
+
 	private class ChromosomeTimePair {
-		String chromosome;
-		Double time;
-		
-		ChromosomeTimePair(String s, Double d) {
+        private String chromosome;
+        private Double time;
+
+        ChromosomeTimePair(String s, Double d) {
 			chromosome = s;
 			time = d;
 		}
-		
-		public String getChromosome() {
-			return chromosome;
+
+        String getChromosome() {
+            return chromosome;
 		}
-		
-		public Double getTime() {
-			return time;
+
+        Double getTime() {
+            return time;
 		}
 	}
 }
