@@ -1,33 +1,21 @@
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
 public class RefactoredGA {
-	private static Population currentPopulation;
-	// fitness value file
-	private static int StoppingCondition = 0;
-	
-	private static File populationOutput;
+    static Random rand = new Random();
+    // fitness value file
+    private static int StoppingCondition = 0;
 	private static Scanner scan;
-	private static File fitFile;
-
-	public static int fitnessValue = 0;
-
-	static Random rand = new Random();
 
 	public static void main(String[] args) throws Exception {
-		currentPopulation = new Population();
-		// bestChromosomesMap = new HashMap<String, Double>();
-		// iterationChromosomeMap = new HashMap<>();
+        GeneticAlgorithmConfiguration config = new GeneticAlgorithmConfiguration();
+        config.allowDuplicates();
+        config.batchMode();
+        // bestChromosomesMap = new HashMap<String, Double>();
+        // iterationChromosomeMap = new HashMap<>();
 		// boolean allowDupWorkers = true;
 		// runGA(allowDupWorkers);
 		// printResults();
@@ -40,15 +28,13 @@ public class RefactoredGA {
 		while(inputScanner.hasNext()){
 			currentLine = inputScanner.nextLine();
 			lineParser = new Scanner(currentLine);
-			
-			currentPopulation.setSize(Integer.parseInt(lineParser.next()));
-			currentPopulation.setCrossover(Float.parseFloat(lineParser.next()));
-			currentPopulation.setInitMutation(Float.parseFloat(lineParser.next()));
-			
-			boolean allowDupWorkers = true;
-			boolean batch = false;
-			runGA(allowDupWorkers, batch);
-			printResultsToFile();
+
+            config.setSize(Integer.parseInt(lineParser.next()));
+            config.setCrossover(Float.parseFloat(lineParser.next()));
+            config.setInitMutation(Float.parseFloat(lineParser.next()));
+
+            runGA(config);
+            printResultsToFile();
 			
 			if(scan != null)
 				scan.close();
@@ -75,20 +61,20 @@ public class RefactoredGA {
 	
 	private static String getBestResults() {
 		StringBuffer results = new StringBuffer();
-		for (String chromosome : currentPopulation.getBestChromosomes()) {
-			results.append(String.format("%s : ", chromosome));
-			results.append(String.format("%f : ", currentPopulation.getBestChromosomeTime(chromosome)));
-			results.append(String.format("%d", currentPopulation.getChromosomeIteration(chromosome)));
-			results.append(System.getProperty("line.separator"));
-		}
-		
-		results.append(String.format("XORate = %f", currentPopulation.getCrossover()));
-		results.append(System.getProperty("line.separator"));
-		
-		results.append(String.format("mutRate = %f", currentPopulation.getMutation()));
-		results.append(System.getProperty("line.separator"));
-		
-		return results.toString();
+        for (String chromosome : config.getBestChromosomes()) {
+            results.append(String.format("%s : ", chromosome));
+            results.append(String.format("%f : ", config.getBestChromosomeTime(chromosome)));
+            results.append(String.format("%d", config.getChromosomeIteration(chromosome)));
+            results.append(System.getProperty("line.separator"));
+        }
+
+        results.append(String.format("XORate = %f", config.getCrossover()));
+        results.append(System.getProperty("line.separator"));
+
+        results.append(String.format("mutRate = %f", config.getMutation()));
+        results.append(System.getProperty("line.separator"));
+
+        return results.toString();
 	}
 	
 	private static void printToFile(File output) throws IOException {
@@ -96,15 +82,15 @@ public class RefactoredGA {
 		
 		String bestChromosomeResults = getBestResults();
 
-		String best = currentPopulation.getBestOverallChromosome();
-				
-		bw.write(bestChromosomeResults);
-		bw.write(String.format("Best chromosome : %s : Iteration = %d : Score = %f : mutRate = %f", 
-				best, currentPopulation.getChromosomeIteration(best), 
-				currentPopulation.getBestChromosomeTime(best), 
-				currentPopulation.getMutation()));
-		bw.newLine();
-		bw.flush();
+        String best = config.getBestOverallChromosome();
+
+        bw.write(bestChromosomeResults);
+        bw.write(String.format("Best chromosome : %s : Iteration = %d : Score = %f : mutRate = %f",
+                best, config.getChromosomeIteration(best),
+                config.getBestChromosomeTime(best),
+                config.getMutation()));
+        bw.newLine();
+        bw.flush();
 		bw.close();
 
 	}
@@ -112,32 +98,32 @@ public class RefactoredGA {
 	private static void printResultsToFile() throws IOException {
 		File newOutput = 
 			createResultsFile(
-				currentPopulation.getSize(), 
-				currentPopulation.getCrossover(),
-				currentPopulation.getInitMutation());
-		
-		printToFile(newOutput);
-	}
+                    config.getSize(),
+                    config.getCrossover(),
+                    config.getInitMutation());
 
-	public static void runGA(boolean allowDupGenes, boolean batch) throws Exception {
-		if(allowDupGenes) System.out.println("Allowing duplicates");
-		else System.out.println("Duplicates NOT allowed.");
+        printToFile(newOutput);
+    }
+
+    public static void runGA(GeneticAlgorithmConfiguration config) throws Exception {
+        if (config.duplicateGenesEnabled()) System.out.println("Allowing duplicates");
+        else System.out.println("Duplicates NOT allowed.");
 		String path = "C:\\Users\\etest\\Desktop\\AirInterdiction\\";
-		runSetup(path, allowDupGenes, batch);
+        runSetup(path, config.duplicateGenesEnabled(), config.batchModeEnabled());
 
 		// convergentRun keeps track of how many iterations have occurred where a new
 		// solution has not been found
 		int convergentRun = 0;
-		for (int loop = 0; loop < currentPopulation.getIterations(); loop++) {
-			if(loop % 100 == 0) System.out.println("loop = " + loop);
-			
-			double largestFitness = Double.MIN_VALUE;
+        for (int loop = 0; loop < config.getIterations(); loop++) {
+            if (loop % 100 == 0) System.out.println("loop = " + loop);
+
+            double largestFitness = Double.MIN_VALUE;
 			double smallestFitness = Double.MAX_VALUE;
 			int loser = -1;
 			int winner = -1;
 
 			Scanner fitnessScanner = new Scanner(fitFile);
-            for (int i = 0; i < currentPopulation.getSize(); i++) {
+            for (int i = 0; i < config.getSize(); i++) {
                 popmember[i] = fitnessScanner.nextDouble();
 				if (popmember[i] > largestFitness) {
 					largestFitness = popmember[i];
@@ -162,17 +148,17 @@ public class RefactoredGA {
 			if (popmember[winner] < StoppingCondition) {
 				System.out.println("Stopping condition reached");
 				break;
-            } else if (convergentRun >= currentPopulation.getConvergence()) {
+            } else if (convergentRun >= config.getConvergence()) {
                 System.out.println("GA has converged based on the given convergenceFactor ("
-                        + currentPopulation.getConvergence() + ")");
+                        + config.getConvergence() + ")");
                 break;
-            } else if (convergentRun == currentPopulation.getConvergence() / 2) {
-                currentPopulation.increaseMutationRate(0.01);
-                System.out.println("mutRate updated : " + currentPopulation.getConvergence());
+            } else if (convergentRun == config.getConvergence() / 2) {
+                config.increaseMutationRate(0.01);
+                System.out.println("mutRate updated : " + config.getConvergence());
             }
 
-            for (int i = 0; i < currentPopulation.getSize(); i++) {
-                if (rand.nextDouble() < currentPopulation.getCrossover()) {
+            for (int i = 0; i < config.getSize(); i++) {
+                if (rand.nextDouble() < config.getCrossover()) {
                     reproduction(getWinners(), loser, allowDupGenes);
 				}
 			}
@@ -189,8 +175,8 @@ public class RefactoredGA {
 			}
 		}
 
-        if (convergentRun < currentPopulation.getConvergence())
-            System.out.println("GA simulation completed after " + currentPopulation.getIterations() + " rounds.");
+        if (convergentRun < config.getConvergence())
+            System.out.println("GA simulation completed after " + config.getIterations() + " rounds.");
         else
 			System.out.println("converged");
 	}
