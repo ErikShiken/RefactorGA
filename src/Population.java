@@ -12,6 +12,7 @@ public class Population {
 	private int[][] population;
 	private int numAgents;
 	private int size;
+	private ChromosomeTimePair bestOverallChromosome;
 	
 	// key = chromosome, value = time
 	private Map<String, Double> bestChromosomesMap;
@@ -185,26 +186,38 @@ public class Population {
 	}
 
 	public String getBestOverallChromosome() {
-		double value = 0f;
-		double smallest = Double.MAX_VALUE;
-		String best = "";
-		for (String chromosome : getBestChromosomes()) {
-			value = getBestChromosomeTime(chromosome);
-
-			if (value < smallest) {
-				smallest = value;
-				best = chromosome;
-			} else if (value == smallest && iterationChromosomeMap.get(chromosome) < iterationChromosomeMap.get(best)) {
-				best = chromosome;
-			}
-		}
-		
-		return best;
+		return bestChromosomeOverall.getChromosome();
 	}
 
 	public void addBestChromosome(String chromosome, Double bestTime) {
 		// do not overwrite the original time seen for this chromosome
-		if(bestChromosomesMap.get(chromosome) == null)
+		if(bestChromosomesMap.get(chromosome) == null) {
 			this.bestChromosomesMap.put(chromosome, bestTime);
+
+			updateBestOverall(bestTime);
+		}
+	}
+	
+	public void updateBestOverall(Double bestTime) {
+		if(bestChromosomeOverall == null || bestChromosomeOverall.getTime() > bestTime)
+			bestChromosomeOverall = new ChromosomeTimePair(chromosome, bestTime);
+	}
+	
+	private class ChromosomeTimePair {
+		String chromosome;
+		Double time;
+		
+		ChromosomeTimePair(String s, Double d) {
+			chromosome = s;
+			time = d;
+		}
+		
+		public String getChromosome() {
+			return chromosome;
+		}
+		
+		public Double getTime() {
+			return time;
+		}
 	}
 }
