@@ -1,24 +1,17 @@
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Random;
 import java.util.Scanner;
 
 public class RefactoredGA {
-    static Random rand = new Random();
     // fitness value file
-    private static int StoppingCondition = 0;
+    private static Double StoppingCondition = 0d;
 	private static Scanner scan;
 
 	public static void main(String[] args) throws Exception {
         GeneticAlgorithmConfiguration config = new GeneticAlgorithmConfiguration();
         config.allowDuplicates();
         config.batchMode();
-        // bestChromosomesMap = new HashMap<String, Double>();
-        // iterationChromosomeMap = new HashMap<>();
-		// boolean allowDupWorkers = true;
-		// runGA(allowDupWorkers);
-		// printResults();
 
 		File input = new File("settings.txt");
 		Scanner inputScanner = new Scanner(input);
@@ -32,6 +25,7 @@ public class RefactoredGA {
             config.setSize(Integer.parseInt(lineParser.next()));
             config.setCrossover(Float.parseFloat(lineParser.next()));
             config.setInitMutation(Float.parseFloat(lineParser.next()));
+            config.setWorkingPath();
 
             runGA(config);
             printResultsToFile();
@@ -108,8 +102,8 @@ public class RefactoredGA {
     public static void runGA(GeneticAlgorithmConfiguration config) throws Exception {
         if (config.duplicateGenesEnabled()) System.out.println("Allowing duplicates");
         else System.out.println("Duplicates NOT allowed.");
-		String path = "C:\\Users\\etest\\Desktop\\AirInterdiction\\";
-        runSetup(path, config.duplicateGenesEnabled(), config.batchModeEnabled());
+
+        runSetup(config.getWorkingPath(), config.duplicateGenesEnabled(), config.batchModeEnabled(), config.getSize());
 
 		// convergentRun keeps track of how many iterations have occurred where a new
 		// solution has not been found
@@ -117,27 +111,9 @@ public class RefactoredGA {
         for (int loop = 0; loop < config.getIterations(); loop++) {
             if (loop % 100 == 0) System.out.println("loop = " + loop);
 
-            double largestFitness = Double.MIN_VALUE;
-			double smallestFitness = Double.MAX_VALUE;
-			int loser = -1;
-			int winner = -1;
+            config.setPopulationFitnessValues();
 
-			Scanner fitnessScanner = new Scanner(fitFile);
-            for (int i = 0; i < config.getSize(); i++) {
-                popmember[i] = fitnessScanner.nextDouble();
-				if (popmember[i] > largestFitness) {
-					largestFitness = popmember[i];
-					loser = i;
-				} 
-				
-				if (popmember[i] < smallestFitness) {
-					smallestFitness = popmember[i];
-					winner = i;
-				}
-			}
-			fitnessScanner.close();
-
-			if(updateWinner(winner, loop))
+			if(config.updateWinner(loop))
 			{	
 				System.out.println("convergentRun was " + convergentRun);
 				convergentRun = 0;
@@ -145,7 +121,7 @@ public class RefactoredGA {
 			else {	convergentRun++; }
 			
 			// stopping condition
-			if (popmember[winner] < StoppingCondition) {
+			if (config.getWinningFitnessValue() < StoppingCondition) {
 				System.out.println("Stopping condition reached");
 				break;
             } else if (convergentRun >= config.getConvergence()) {
@@ -157,21 +133,18 @@ public class RefactoredGA {
                 System.out.println("mutRate updated : " + config.getConvergence());
             }
 
-            for (int i = 0; i < config.getSize(); i++) {
-                if (rand.nextDouble() < config.getCrossover()) {
-                    reproduction(getWinners(), loser, allowDupGenes);
-				}
-			}
+            config.doCrossover();
 
+			config.mutate();
 			// Mutate the new population a bit to add some new genetic material
 			mutate(winner);
 
-			if (batch) {
-                writeNewPopulationToFile();
+			if (config.batchModeEnabled()) {
+                writeNewPopulationToFile(config.getWorkingPath());
 
-				runSimulation(path);
+				runSimulation(config.getWorkingPath());
 			} else {
-				writeNewPopulationIterative(path);
+				writeNewPopulationIterative(config.getWorkingPath(), loop);
 			}
 		}
 
@@ -320,41 +293,6 @@ public class RefactoredGA {
 		}
 	}
 
-    private static int[] getWinners(Double winnerSimilarityRatio, int[][] population, int convergenceFactor) {
-        int numTournament = 2;
-		// winning gene positions, the start of binary selection
-		int[] winners = new int[numTournament];
-
-        int tempConverge = convergenceFactor;
-        double diffCount = 0;
-		double tempSimilarity = winnerSimilarityRatio;
-		while (diffCount / population[0].length <= tempSimilarity) {
-			if(diffCount > 0) {
-				tempSimilarity -= 0.01;
-                tempConverge--;
-            }
-			diffCount = 0.0;
-
-			int lastWinner = -1;
-			for (int i = 0; i < numTournament; i++) {
-				winners[i] = selectParentUsingBinaryTournament(lastWinner);
-				lastWinner = winners[i];
-			}
-
-			// check similarity, if 2 parents are near identical, then the next
-			// child will probably duplicate its parent
-			// TL;DR - lets prevent in-breeding
-			int[] winner1 = population[winners[0]];
-			int[] winner2 = population[winners[1]];
-			for (int i = 0; i < winner1.length; i++) {
-				if (winner1[i] != winner2[i])
-					diffCount++;
-			}
-		}
-
-		return winners;
-	}
-
     private static void mutate(int winner, Integer popSize, int[][] population, Double mutRate) {
         int[] tempChromosome = null;
 		StringBuilder winnerStr = new StringBuilder();
@@ -406,21 +344,6 @@ public class RefactoredGA {
 
 		// replace the loser with the child
 		population[loser] = child;
-	}
-
-	// if this winner has not been seen, add it to the bestChromosomeMap
-	// -- returns true if the map has been updated, false otherwise
-    private static boolean updateWinner(int winner, int loop, int[][] populaton) {
-        boolean updated = false;
-		String chromString = convertToString(population[winner]);
-		if (bestChromosomesMap.get(chromString) == null) {
-			System.out.println("adding to map : " + chromString + "(" + popmember[winner] + ") : loop = " + loop);
-			bestChromosomesMap.put(chromString, popmember[winner]);
-			iterationChromosomeMap.put(chromString, (loop + 1));
-			updated = true;
-		}
-		
-		return updated;
 	}
 
 	private static void runSimulation(String path) throws IOException, InterruptedException {
@@ -686,25 +609,5 @@ public class RefactoredGA {
 		}
 
 		return false;
-	}
-
-    public static int selectParentUsingBinaryTournament(int lastWinner, Integer popSize, int[] popmember) {
-        int x = randomNumber(0, popSize);
-		int y = randomNumber(0, popSize);
-		while (x == y || x == lastWinner || y == lastWinner) {
-			x = randomNumber(0, popSize);
-			y = randomNumber(0, popSize);
-		}
-
-		if (popmember[x] < popmember[y]) {
-			return x;
-		} else {
-			return y;
-		}
-	}
-
-	public static int randomNumber(int min, int max) {
-		double d = min + rand.nextDouble() * (max - min);
-		return (int) d;
 	}
 }// End RefactorGA class

@@ -4,11 +4,11 @@ import org.junit.Test;
 
 public class GeneticAlgorithmConfigurationTest {
 
-	private static Population current;
+	private static GeneticAlgorithmConfiguration current;
 	
 	@BeforeClass
 	public static void setUp() {
-		current = new Population();
+		current = new GeneticAlgorithmConfiguration();
 	}
 	
 	@Test
