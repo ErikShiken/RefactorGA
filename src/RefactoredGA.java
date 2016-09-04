@@ -320,32 +320,6 @@ public class RefactoredGA {
 		}
 	}
 
-    private static void reproduction(int[] winners, int loser, boolean allowDup, int[][] population) {
-        int[] child;
-		if (allowDup) {
-			child = orderOneCrossover(population[winners[0]], population[winners[1]]);
-		} else {
-			child = orderOneCrossoverWoRepetition(population[winners[0]], population[winners[1]]);
-		}
-		boolean duplicate = duplicate(child, population);
-		while (duplicate) {
-			if (allowDup) {
-				child = orderOneCrossover(population[winners[0]], population[winners[1]]);
-			} else {
-				child = orderOneCrossoverWoRepetition(population[winners[0]], population[winners[1]]);
-			}
-			duplicate = duplicate(child, population);
-			
-			// bunu diger case icin kullanmak istersen && kaldir
-			if (duplicate && !allowDup) {
-				winners = getWinners();
-			}
-		}
-
-		// replace the loser with the child
-		population[loser] = child;
-	}
-
 	private static void runSimulation(String path) throws IOException, InterruptedException {
 
 	}
@@ -504,91 +478,6 @@ public class RefactoredGA {
 			array[random] = array[i];
 			array[i] = randomElement;
 		}
-	}
-
-	private static int[] orderOneCrossover(int[] parent1, int[] parent2) {
-		int l = parent1.length;
-		if (l != parent2.length) {
-			System.err.println("parents must have equal lengths");
-			return null;
-		}
-
-		// get 1 random int between 0 and size of array
-		int r1 = rand.nextInt(l);
-
-		// create the child .. initial elements are -1
-		int[] child = new int[l];
-		for (int i = 0; i < r1; i++) {
-			child[i] = parent1[i];
-		}
-
-		for (int i = r1; i < l; i++) {
-			child[i] = parent2[i];
-		}
-		return child;
-	}
-
-	public static int[] orderOneCrossoverWoRepetition(int[] parent1, int[] parent2) {
-		int l = parent1.length;
-		if (l != parent2.length) {
-			System.err.println("parents must have equal lengths");
-			return null;
-		}
-		// get 2 random ints between 0 and size of array
-		int r1 = rand.nextInt(l);
-		int r2 = rand.nextInt(l);
-
-		// to make sure the r1 < r2
-		while (r1 >= r2) {
-			r1 = rand.nextInt(l);
-			r2 = rand.nextInt(l);
-		}
-
-		// create the child .. initial elements are -1
-		int[] child = new int[l];
-		for (int i = 0; i < l; i++) {
-			child[i] = -1;
-		}
-
-		// copy elements between r1, r2 from parent1 into child
-		for (int i = r1; i <= r2; i++) {
-			child[i] = parent1[i];
-		}
-
-		// array to hold elements of parent1 which are not in child yet
-		int[] y = new int[l - (r2 - r1) - 1];
-		int j = 0;
-		for (int i = 0; i < l; i++) {
-			if (!searchHelp(child, parent1[i])) {
-				y[j] = parent1[i];
-				j++;
-			}
-		}
-
-		// rotate parent2
-		// number of places is the same as the number of elements after r2
-		int[] copy = parent2.clone();
-		rotate(copy, l - r2 - 1);
-
-		// now order the elements in y according to their order in parent2
-		int[] y1 = new int[l - (r2 - r1) - 1];
-		j = 0;
-		for (int i = 0; i < l; i++) {
-			if (searchHelp(y, copy[i])) {
-				y1[j] = copy[i];
-				j++;
-			}
-		}
-
-		// now copy the remaining elements (i.e. remaining in parent1) into
-		// child
-		// according to their order in parent2 .. starting after r2!
-		j = 0;
-		for (int i = 0; i < y1.length; i++) {
-			int ci = (r2 + i + 1) % l;// current index
-			child[ci] = y1[i];
-		}
-		return child;
 	}
 
 	public static void rotate(int[] arr, int order) {

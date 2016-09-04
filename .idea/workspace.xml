@@ -6,7 +6,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/GeneticAlgorithmConfiguration.java" afterPath="$PROJECT_DIR$/src/GeneticAlgorithmConfiguration.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/RefactoredGA.java" afterPath="$PROJECT_DIR$/src/RefactoredGA.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/srcTest/GeneticAlgorithmConfigurationTest.java" afterPath="$PROJECT_DIR$/srcTest/GeneticAlgorithmConfigurationTest.java" />
     </list>
     <ignored path="RefactorGA.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,47 +39,46 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GeneticAlgorithmConfiguration.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GeneticAlgorithmConfiguration.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/GeneticAlgorithmConfiguration.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="246" column="55" selection-start-line="246" selection-start-column="55" selection-end-line="246" selection-end-column="55" />
+            <state relative-caret-position="102">
+              <caret line="284" column="17" selection-start-line="284" selection-start-column="17" selection-end-line="284" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1287#1288#0" expanded="true" />
-                <element signature="e#1358#1359#0" expanded="true" />
+                <element signature="e#1180#1181#0" expanded="true" />
+                <element signature="e#1251#1252#0" expanded="true" />
                 <element signature="method#setInitMutation#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
                 <element signature="method#getBestOverallChromosome#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
                 <element signature="method#addBestChromosome#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
                 <element signature="method#updateBestOverall#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
                 <element signature="method#setWorkingPath#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-                <element signature="e#5134#5135#0" expanded="true" />
-                <element signature="e#5192#5193#0" expanded="true" />
-                <element signature="e#5226#5227#0" expanded="true" />
-                <element signature="e#5289#5290#0" expanded="true" />
-                <element signature="e#5335#5336#0" expanded="true" />
-                <element signature="e#5403#5404#0" expanded="true" />
-                <element signature="e#5436#5437#0" expanded="true" />
-                <element signature="e#5490#5491#0" expanded="true" />
+                <element signature="e#5027#5028#0" expanded="true" />
+                <element signature="e#5085#5086#0" expanded="true" />
+                <element signature="e#5119#5120#0" expanded="true" />
+                <element signature="e#5182#5183#0" expanded="true" />
+                <element signature="e#5228#5229#0" expanded="true" />
+                <element signature="e#5296#5297#0" expanded="true" />
+                <element signature="e#5329#5330#0" expanded="true" />
+                <element signature="e#5383#5384#0" expanded="true" />
                 <element signature="method#ChromosomeFitnessValues#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-                <element signature="method#updateFitnessValues#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
                 <element signature="method#updateWorst#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-                <element signature="e#10980#10981#0" expanded="true" />
-                <element signature="e#11025#11026#0" expanded="true" />
-                <element signature="e#11075#11076#0" expanded="true" />
-                <element signature="e#11135#11136#0" expanded="true" />
-                <element signature="e#11172#11173#0" expanded="true" />
-                <element signature="e#11218#11219#0" expanded="true" />
+                <element signature="e#15237#15238#0" expanded="true" />
+                <element signature="e#15282#15283#0" expanded="true" />
+                <element signature="e#15332#15333#0" expanded="true" />
+                <element signature="e#15392#15393#0" expanded="true" />
+                <element signature="e#15429#15430#0" expanded="true" />
+                <element signature="e#15475#15476#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RefactoredGA.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RefactoredGA.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/RefactoredGA.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="136" column="0" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
+            <state relative-caret-position="287">
+              <caret line="482" column="0" selection-start-line="482" selection-start-column="0" selection-end-line="482" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#createResultsFile#0;class#RefactoredGA#0" expanded="false" />
@@ -112,8 +110,8 @@
         <option value="$PROJECT_DIR$/srcTest/PopulationTest.java" />
         <option value="$PROJECT_DIR$/src/Population.java" />
         <option value="$PROJECT_DIR$/srcTest/GeneticAlgorithmConfigurationTest.java" />
-        <option value="$PROJECT_DIR$/src/GeneticAlgorithmConfiguration.java" />
         <option value="$PROJECT_DIR$/src/RefactoredGA.java" />
+        <option value="$PROJECT_DIR$/src/GeneticAlgorithmConfiguration.java" />
       </list>
     </option>
   </component>
@@ -157,16 +155,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="RefactorGA" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="RefactorGA" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="RefactorGA" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -490,7 +478,14 @@
       <option name="project" value="LOCAL" />
       <updated>1472400244339</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="- More refactoring (work in progress)">
+      <created>1472941480366</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1472941480366</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -509,7 +504,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5013889" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -566,7 +561,8 @@
     <MESSAGE value="- Switch to Intellij&#10;- More refactoring&#10;- 1 new unit test" />
     <MESSAGE value="- More refactoring (renaming)" />
     <MESSAGE value="- More refactoring (method signatures)" />
-    <option name="LAST_COMMIT_MESSAGE" value="- More refactoring (method signatures)" />
+    <MESSAGE value="- More refactoring (work in progress)" />
+    <option name="LAST_COMMIT_MESSAGE" value="- More refactoring (work in progress)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -595,30 +591,29 @@
           <caret line="34" column="30" selection-start-line="34" selection-start-column="30" selection-end-line="34" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1287#1288#0" expanded="true" />
-            <element signature="e#1358#1359#0" expanded="true" />
+            <element signature="e#1180#1181#0" expanded="true" />
+            <element signature="e#1251#1252#0" expanded="true" />
             <element signature="method#setInitMutation#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
             <element signature="method#getBestOverallChromosome#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
             <element signature="method#addBestChromosome#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
             <element signature="method#updateBestOverall#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
             <element signature="method#setWorkingPath#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="e#5134#5135#0" expanded="true" />
-            <element signature="e#5192#5193#0" expanded="true" />
-            <element signature="e#5226#5227#0" expanded="true" />
-            <element signature="e#5289#5290#0" expanded="true" />
-            <element signature="e#5335#5336#0" expanded="true" />
-            <element signature="e#5403#5404#0" expanded="true" />
-            <element signature="e#5436#5437#0" expanded="true" />
-            <element signature="e#5490#5491#0" expanded="true" />
+            <element signature="e#5027#5028#0" expanded="true" />
+            <element signature="e#5085#5086#0" expanded="true" />
+            <element signature="e#5119#5120#0" expanded="true" />
+            <element signature="e#5182#5183#0" expanded="true" />
+            <element signature="e#5228#5229#0" expanded="true" />
+            <element signature="e#5296#5297#0" expanded="true" />
+            <element signature="e#5329#5330#0" expanded="true" />
+            <element signature="e#5383#5384#0" expanded="true" />
             <element signature="method#ChromosomeFitnessValues#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="method#updateFitnessValues#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
             <element signature="method#updateWorst#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="e#10980#10981#0" expanded="true" />
-            <element signature="e#11025#11026#0" expanded="true" />
-            <element signature="e#11075#11076#0" expanded="true" />
-            <element signature="e#11135#11136#0" expanded="true" />
-            <element signature="e#11172#11173#0" expanded="true" />
-            <element signature="e#11218#11219#0" expanded="true" />
+            <element signature="e#15237#15238#0" expanded="true" />
+            <element signature="e#15282#15283#0" expanded="true" />
+            <element signature="e#15332#15333#0" expanded="true" />
+            <element signature="e#15392#15393#0" expanded="true" />
+            <element signature="e#15429#15430#0" expanded="true" />
+            <element signature="e#15475#15476#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -648,49 +643,48 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/GeneticAlgorithmConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="246" column="55" selection-start-line="246" selection-start-column="55" selection-end-line="246" selection-end-column="55" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1287#1288#0" expanded="true" />
-            <element signature="e#1358#1359#0" expanded="true" />
-            <element signature="method#setInitMutation#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="method#getBestOverallChromosome#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="method#addBestChromosome#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="method#updateBestOverall#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="method#setWorkingPath#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="e#5134#5135#0" expanded="true" />
-            <element signature="e#5192#5193#0" expanded="true" />
-            <element signature="e#5226#5227#0" expanded="true" />
-            <element signature="e#5289#5290#0" expanded="true" />
-            <element signature="e#5335#5336#0" expanded="true" />
-            <element signature="e#5403#5404#0" expanded="true" />
-            <element signature="e#5436#5437#0" expanded="true" />
-            <element signature="e#5490#5491#0" expanded="true" />
-            <element signature="method#ChromosomeFitnessValues#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="method#updateFitnessValues#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="method#updateWorst#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
-            <element signature="e#10980#10981#0" expanded="true" />
-            <element signature="e#11025#11026#0" expanded="true" />
-            <element signature="e#11075#11076#0" expanded="true" />
-            <element signature="e#11135#11136#0" expanded="true" />
-            <element signature="e#11172#11173#0" expanded="true" />
-            <element signature="e#11218#11219#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/RefactoredGA.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="136" column="0" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
+        <state relative-caret-position="287">
+          <caret line="482" column="0" selection-start-line="482" selection-start-column="0" selection-end-line="482" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#createResultsFile#0;class#RefactoredGA#0" expanded="false" />
             <element signature="method#printToFile#0;class#RefactoredGA#0" expanded="false" />
             <element signature="method#printResultsToFile#0;class#RefactoredGA#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GeneticAlgorithmConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="284" column="17" selection-start-line="284" selection-start-column="17" selection-end-line="284" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1180#1181#0" expanded="true" />
+            <element signature="e#1251#1252#0" expanded="true" />
+            <element signature="method#setInitMutation#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
+            <element signature="method#getBestOverallChromosome#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
+            <element signature="method#addBestChromosome#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
+            <element signature="method#updateBestOverall#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
+            <element signature="method#setWorkingPath#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
+            <element signature="e#5027#5028#0" expanded="true" />
+            <element signature="e#5085#5086#0" expanded="true" />
+            <element signature="e#5119#5120#0" expanded="true" />
+            <element signature="e#5182#5183#0" expanded="true" />
+            <element signature="e#5228#5229#0" expanded="true" />
+            <element signature="e#5296#5297#0" expanded="true" />
+            <element signature="e#5329#5330#0" expanded="true" />
+            <element signature="e#5383#5384#0" expanded="true" />
+            <element signature="method#ChromosomeFitnessValues#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
+            <element signature="method#updateWorst#0;class#ChromosomeFitnessValues#0;class#GeneticAlgorithmConfiguration#0" expanded="false" />
+            <element signature="e#15237#15238#0" expanded="true" />
+            <element signature="e#15282#15283#0" expanded="true" />
+            <element signature="e#15332#15333#0" expanded="true" />
+            <element signature="e#15392#15393#0" expanded="true" />
+            <element signature="e#15429#15430#0" expanded="true" />
+            <element signature="e#15475#15476#0" expanded="true" />
           </folding>
         </state>
       </provider>

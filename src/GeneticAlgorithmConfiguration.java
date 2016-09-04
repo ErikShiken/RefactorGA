@@ -1,10 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class GeneticAlgorithmConfiguration {
     private Random rand;
@@ -244,9 +240,115 @@ public class GeneticAlgorithmConfiguration {
     public void doCrossover() {
         for (int i = 0; i < getSize(); i++) {
             if (rand.nextDouble() < getCrossover()) {
-                reproduction(getWinners(), getLoser(), allowDuplicates());
+                reproduction(getWinners(getSimilarity(), chromosomePopulation.getPopulation(), getConvergence()),
+                    getLoser(), duplicateGenesEnabled(), chromosomePopulation.getPopulation());
             }
         }
+    }
+
+    private void reproduction(int[] winners, int loser, boolean allowDup, int[][] population) {
+        int[] child;
+        if (allowDup) {
+            child = orderOneCrossover(population[winners[0]], population[winners[1]]);
+        } else {
+            child = orderOneCrossoverWoRepetition(population[winners[0]], population[winners[1]]);
+        }
+        boolean duplicate = duplicate(child, population);
+        while (duplicate) {
+            if (allowDup) {
+                child = orderOneCrossover(population[winners[0]], population[winners[1]]);
+            } else {
+                child = orderOneCrossoverWoRepetition(population[winners[0]], population[winners[1]]);
+            }
+            duplicate = duplicate(child, population);
+
+            // bunu diger case icin kullanmak istersen && kaldir
+            if (duplicate && !allowDup) {
+                winners = getWinners();
+            }
+        }
+
+        // replace the loser with the child
+        population[loser] = child;
+    }
+
+    private boolean parentLengthsOk(Integer[] p1, Integer[] p2) {
+        int l = p1.length;
+        if (l != p2.length) {
+            System.err.println("parents must have equal lengths");
+            return false;
+        }
+
+        return true;
+    }
+
+    public Integer[] orderOneCrossoverWoRepetition(Integer[] parent1, Integer[] parent2) {
+        if(!parentLengthsOk(parent1, parent2)) return null;
+
+        int l = parent1.length;
+        ParentIndices parentIndices = new ParentIndices(rand.nextInt(l), rand.nextInt(l));
+
+        // create the child .. initial elements are -1
+        Integer[] child = new Integer[l];
+        Arrays.fill(child, -1);
+        child = Arrays.copyOfRange(parent1, parentIndices.getIndex1(), parentIndices.getIndex2());
+
+        // array to hold elements of parent1 which are not in child yet
+        int[] y = new int[l - (parentIndices.getIndex2() - parentIndices.getIndex1()) - 1];
+        int j = 0;
+        for (int i = 0; i < l; i++) {
+            if (!searchHelp(child, parent1[i])) {
+                y[j] = parent1[i];
+                j++;
+            }
+        }
+
+        // rotate parent2
+        // number of places is the same as the number of elements after r2
+        Integer[] copy = parent2.clone();
+        rotate(copy, l - r2 - 1);
+
+        // now order the elements in y according to their order in parent2
+        int[] y1 = new int[l - (r2 - r1) - 1];
+        j = 0;
+        for (int i = 0; i < l; i++) {
+            if (searchHelp(y, copy[i])) {
+                y1[j] = copy[i];
+                j++;
+            }
+        }
+
+        // now copy the remaining elements (i.e. remaining in parent1) into
+        // child
+        // according to their order in parent2 .. starting after r2!
+        j = 0;
+        for (int i = 0; i < y1.length; i++) {
+            int ci = (r2 + i + 1) % l;// current index
+            child[ci] = y1[i];
+        }
+        return child;
+    }
+
+    private int[] orderOneCrossover(int[] parent1, int[] parent2) {
+        int l = parent1.length;
+        if (l != parent2.length) {
+            System.err.println("parents must have equal lengths");
+            return null;
+        }
+
+        // get 1 random int between 0 and size of array
+        int r1 = rand.nextInt(l);
+
+        // create the child .. initial elements are -1
+        int[] child = new int[l];
+        for (int i = 0; i < r1; i++) {
+            child[i] = parent1[i];
+        }
+
+        for (int i = r1; i < l; i++) {
+            child[i] = parent2[i];
+        }
+        return child;
     }
 
     private class ChromosomeTimePair {
@@ -282,7 +384,7 @@ public class GeneticAlgorithmConfiguration {
         return updated;
     }
 
-    private static int[] getWinners(Double winnerSimilarityRatio, int[][] population, int convergenceFactor) {
+    private int[] getWinners(Double winnerSimilarityRatio, int[][] population, int convergenceFactor) {
         int numTournament = 2;
         // winning gene positions, the start of binary selection
         int[] winners = new int[numTournament];
@@ -299,7 +401,7 @@ public class GeneticAlgorithmConfiguration {
 
             int lastWinner = -1;
             for (int i = 0; i < numTournament; i++) {
-                winners[i] = selectParentUsingBinaryTournament(lastWinner);
+                winners[i] = selectParentUsingBinaryTournament(lastWinner, getSize(), chromosomePopulation.getFitnessValues());
                 lastWinner = winners[i];
             }
 
@@ -317,7 +419,7 @@ public class GeneticAlgorithmConfiguration {
         return winners;
     }
 
-    public static int selectParentUsingBinaryTournament(int lastWinner, Integer popSize, int[] popmember) {
+    public int selectParentUsingBinaryTournament(int lastWinner, Integer popSize, Double[] popmember) {
         int x = randomNumber(0, popSize);
         int y = randomNumber(0, popSize);
         while (x == y || x == lastWinner || y == lastWinner) {
@@ -332,13 +434,38 @@ public class GeneticAlgorithmConfiguration {
         }
     }
 
-    public static int randomNumber(int min, int max) {
+    public int randomNumber(int min, int max) {
         double d = min + rand.nextDouble() * (max - min);
         return (int) d;
     }
 
+    private class ParentIndices {
+        private Integer index1;
+        private Integer index2;
+
+        ParentIndices(Integer index1, Integer index2) {
+            // make sure index1 < index2
+            if(index1 > index2) {
+                int temp = index1;
+                index1 = index2;
+                index2 = temp;
+            } else if (index1 > 0){
+                index1--;
+            } else {
+                index2++;
+            }
+
+            this.index2 = index2;
+            this.index1 = index1;
+        }
+
+        Integer getIndex1() { return index1; }
+
+        Integer getIndex2() { return index2; `}
+    }
+
     private class ChromosomeFitnessValues {
-        private double[] fitnessValues;
+        private Double[] fitnessValues;
         private int[][] population;
         private int bestChromosome;
         private int worstChromosome;
@@ -361,7 +488,7 @@ public class GeneticAlgorithmConfiguration {
             return winnerString.toString();
         }
 
-        public double[] getFitnessValues() {
+        public Double[] getFitnessValues() {
             return fitnessValues;
         }
 
