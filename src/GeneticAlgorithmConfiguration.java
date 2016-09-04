@@ -1,8 +1,7 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 
-public class GeneticAlgorithmConfiguration {
+class GeneticAlgorithmConfiguration {
     private Random rand;
     private int iterations;
     private double mutation;
@@ -23,7 +22,7 @@ public class GeneticAlgorithmConfiguration {
     private String workingPath;
     private static final String FITNESS_FILE_NAME = "fitness.txt";
 
-    public GeneticAlgorithmConfiguration() {
+    GeneticAlgorithmConfiguration() {
         bestChromosomesMap = new HashMap<>();
         iterationChromosomeMap = new HashMap<>();
         chromosomePopulation = new ChromosomeFitnessValues();
@@ -32,15 +31,15 @@ public class GeneticAlgorithmConfiguration {
         rand = new Random();
     }
 
-    public File getFitnessFile() {
+    File getFitnessFile() {
         return new File(workingPath + "\\" + FITNESS_FILE_NAME);
     }
 
-    public boolean duplicateGenesEnabled() {
+    boolean duplicateGenesEnabled() {
         return allowDuplicateGenes;
     }
 
-    public boolean batchModeEnabled() {
+    boolean batchModeEnabled() {
         return batchProcessing;
     }
 
@@ -329,7 +328,7 @@ public class GeneticAlgorithmConfiguration {
         return child;
     }
 
-    private int[] orderOneCrossover(int[] parent1, int[] parent2) {
+    private int[] orderOneCrossover(Integer[] parent1, Integer[] parent2) {
         int l = parent1.length;
         if (l != parent2.length) {
             System.err.println("parents must have equal lengths");
@@ -350,24 +349,6 @@ public class GeneticAlgorithmConfiguration {
         }
         return child;
     }
-
-    private class ChromosomeTimePair {
-        private String chromosome;
-        private Double time;
-
-        ChromosomeTimePair(String s, Double d) {
-			chromosome = s;
-			time = d;
-		}
-
-        String getChromosome() {
-            return chromosome;
-		}
-
-        Double getTime() {
-            return time;
-		}
-	}
 
     // if this winner has not been seen, add it to the bestChromosomeMap
     // -- returns true if the map has been updated, false otherwise
@@ -437,111 +418,5 @@ public class GeneticAlgorithmConfiguration {
     public int randomNumber(int min, int max) {
         double d = min + rand.nextDouble() * (max - min);
         return (int) d;
-    }
-
-    private class ParentIndices {
-        private Integer index1;
-        private Integer index2;
-
-        ParentIndices(Integer index1, Integer index2) {
-            // make sure index1 < index2
-            if(index1 > index2) {
-                int temp = index1;
-                index1 = index2;
-                index2 = temp;
-            } else if (index1 > 0){
-                index1--;
-            } else {
-                index2++;
-            }
-
-            this.index2 = index2;
-            this.index1 = index1;
-        }
-
-        Integer getIndex1() { return index1; }
-
-        Integer getIndex2() { return index2; `}
-    }
-
-    private class ChromosomeFitnessValues {
-        private Double[] fitnessValues;
-        private int[][] population;
-        private int bestChromosome;
-        private int worstChromosome;
-
-        ChromosomeFitnessValues() {
-            bestChromosome = -1;
-            worstChromosome = -1;
-        }
-
-        public String getWinnerString() {
-            StringBuilder winnerString = new StringBuilder();
-
-            for(int i = 0; i < population.length ; i++) {
-                winnerString.append(population[i]);
-
-                if(i != population.length - 1)
-                    winnerString.append(",");
-            }
-
-            return winnerString.toString();
-        }
-
-        public Double[] getFitnessValues() {
-            return fitnessValues;
-        }
-
-        public int[][] getPopulation() {
-            return population;
-        }
-
-        public void updateFitnessValues() {
-            double largestFitness = Double.MIN_VALUE;
-            double prevLarge = largestFitness;
-
-            double smallestFitness = Double.MAX_VALUE;
-            double prevSmall = smallestFitness;
-            try (Scanner fitnessScanner = new Scanner(getFitnessFile())) {
-                for (int i = 0; i < getSize(); i++) {
-                    fitnessValues[i] = fitnessScanner.nextDouble();
-
-                    largestFitness = updateWorst(largestFitness, fitnessValues[i]);
-                    if(prevLarge != largestFitness) worstChromosome = i;
-                    prevLarge = largestFitness;
-
-                    smallestFitness = updateBest(smallestFitness, fitnessValues[i]);
-                    if(prevSmall != smallestFitness) bestChromosome = i;
-                    prevSmall = smallestFitness;
-                }
-            } catch(FileNotFoundException e) {
-            }
-        }
-
-        private double updateWorst(double largestFitness, double currentFitness) {
-            if (currentFitness > largestFitness)
-                largestFitness = currentFitness;
-
-            return largestFitness;
-        }
-
-        private double updateBest(double smallFitness, double currentFitness) {
-            if (currentFitness > smallFitness)
-                smallFitness = currentFitness;
-
-            return smallFitness;
-        }
-
-        public Integer getBestChromosome() {
-            return bestChromosome;
-        }
-
-        public Double getWinningFitnessValue() {
-            return fitnessValues[bestChromosome];
-        }
-
-        public Integer getLoser() {
-            return worstChromosome;
-        }
     }
 }
