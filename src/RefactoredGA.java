@@ -336,25 +336,6 @@ public class RefactoredGA {
 		return sb.toString();
 	}
 
-	private static boolean duplicate(int[] child, int[][] population) {
-		boolean foundDup = true;
-		for (int i = 0; i < population.length; i++) {
-			foundDup = true;
-			for (int j = 0; j < child.length; j++) {
-				if (population[i][j] != child[j]) {
-					foundDup = false;
-					break;
-				}
-			}
-
-			// if there is a duplicate, break out of the loop and return true.
-			// no more work is needed
-			if (foundDup)
-				break;
-		}
-		return foundDup;
-	}
-
     private static void writeNewPopulationToFile(int[][] population, Integer popSize, Integer numAgents)
             throws IOException {
         populationOutput.delete();
@@ -478,25 +459,5 @@ public class RefactoredGA {
 			array[random] = array[i];
 			array[i] = randomElement;
 		}
-	}
-
-	public static void rotate(int[] arr, int order) {
-		int offset = arr.length - order % arr.length;
-		if (offset > 0) {
-			int[] copy = arr.clone();
-			for (int i = 0; i < arr.length; ++i) {
-				int j = (i + offset) % arr.length;
-				arr[i] = copy[j];
-			}
-		}
-	}
-
-	private static boolean searchHelp(int[] arr, int key) {
-		for (int i : arr) {
-			if (i == key)
-				return true;
-		}
-
-		return false;
 	}
 }// End RefactorGA class

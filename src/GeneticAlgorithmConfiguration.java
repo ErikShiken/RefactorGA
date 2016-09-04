@@ -262,12 +262,31 @@ class GeneticAlgorithmConfiguration {
 
             // bunu diger case icin kullanmak istersen && kaldir
             if (duplicate && !allowDup) {
-                winners = getWinners();
+                winners = getWinners(getSimilarity(), population, getConvergence());
             }
         }
 
         // replace the loser with the child
         population[loser] = child;
+    }
+
+    private boolean duplicate(Integer[] child, Integer[][] population) {
+        boolean foundDup = true;
+        for (int i = 0; i < population.length; i++) {
+            foundDup = true;
+            for (int j = 0; j < child.length; j++) {
+                if (population[i][j] != child[j]) {
+                    foundDup = false;
+                    break;
+                }
+            }
+
+            // if there is a duplicate, break out of the loop and return true.
+            // no more work is needed
+            if (foundDup)
+                break;
+        }
+        return foundDup;
     }
 
     private boolean parentLengthsOk(Integer[] p1, Integer[] p2) {
@@ -280,7 +299,27 @@ class GeneticAlgorithmConfiguration {
         return true;
     }
 
-    public Integer[] orderOneCrossoverWoRepetition(Integer[] parent1, Integer[] parent2) {
+    private static boolean searchHelp(Integer[] arr, int key) {
+        for (int i : arr) {
+            if (i == key)
+                return true;
+        }
+
+        return false;
+    }
+
+    static void rotate(Integer[] arr, int order) {
+        int offset = arr.length - order % arr.length;
+        if (offset > 0) {
+            Integer[] copy = arr.clone();
+            for (int i = 0; i < arr.length; ++i) {
+                int j = (i + offset) % arr.length;
+                arr[i] = copy[j];
+            }
+        }
+    }
+
+    Integer[] orderOneCrossoverWoRepetition(Integer[] parent1, Integer[] parent2) {
         if(!parentLengthsOk(parent1, parent2)) return null;
 
         int l = parent1.length;
@@ -292,10 +331,10 @@ class GeneticAlgorithmConfiguration {
         child = Arrays.copyOfRange(parent1, parentIndices.getIndex1(), parentIndices.getIndex2());
 
         // array to hold elements of parent1 which are not in child yet
-        int[] y = new int[l - (parentIndices.getIndex2() - parentIndices.getIndex1()) - 1];
+        Integer[] y = new Integer[l - (parentIndices.getIndex2() - parentIndices.getIndex1()) - 1];
         int j = 0;
         for (int i = 0; i < l; i++) {
-            if (!searchHelp(child, parent1[i])) {
+            if (!GeneticAlgorithmConfiguration.searchHelp(child, parent1[i])) {
                 y[j] = parent1[i];
                 j++;
             }
@@ -304,10 +343,10 @@ class GeneticAlgorithmConfiguration {
         // rotate parent2
         // number of places is the same as the number of elements after r2
         Integer[] copy = parent2.clone();
-        rotate(copy, l - r2 - 1);
+        rotate(copy, l - parentIndices.getIndex2() - 1);
 
         // now order the elements in y according to their order in parent2
-        int[] y1 = new int[l - (r2 - r1) - 1];
+        int[] y1 = new int[l - (parentIndices.getIndex2() - parentIndices.getIndex1()) - 1];
         j = 0;
         for (int i = 0; i < l; i++) {
             if (searchHelp(y, copy[i])) {
@@ -321,7 +360,7 @@ class GeneticAlgorithmConfiguration {
         // according to their order in parent2 .. starting after r2!
         j = 0;
         for (int i = 0; i < y1.length; i++) {
-            int ci = (r2 + i + 1) % l;// current index
+            int ci = (parentIndices.getIndex2() + i + 1) % l;// current index
             child[ci] = y1[i];
         }
         return child;
@@ -338,7 +377,7 @@ class GeneticAlgorithmConfiguration {
         int r1 = rand.nextInt(l);
 
         // create the child .. initial elements are -1
-        int[] child = new int[l];
+        Integer[] child = new Integer[l];
         for (int i = 0; i < r1; i++) {
             child[i] = parent1[i];
         }
@@ -367,7 +406,7 @@ class GeneticAlgorithmConfiguration {
     private Integer[] getWinners(Double winnerSimilarityRatio, Integer[][] population, int convergenceFactor) {
         int numTournament = 2;
         // winning gene positions, the start of binary selection
-        Integer[] winners = new int[numTournament];
+        Integer[] winners = new Integer[numTournament];
 
         int tempConverge = convergenceFactor;
         double diffCount = 0;
