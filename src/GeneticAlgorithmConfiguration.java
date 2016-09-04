@@ -25,7 +25,6 @@ class GeneticAlgorithmConfiguration {
     GeneticAlgorithmConfiguration() {
         bestChromosomesMap = new HashMap<>();
         iterationChromosomeMap = new HashMap<>();
-        chromosomePopulation = new ChromosomeFitnessValues();
         allowDuplicateGenes = false;
         batchProcessing = false;
         rand = new Random();
@@ -47,15 +46,15 @@ class GeneticAlgorithmConfiguration {
 		return bestChromosomesMap.keySet();
 	}
 	
-	public Double getBestChromosomeTime(String chromosome) {
+	Double getBestChromosomeTime(String chromosome) {
 		return bestChromosomesMap.get(chromosome);
 	}
 	
-	public Map<String, Double> getBest() {
+	Map<String, Double> getBest() {
 		return bestChromosomesMap;
 	}
 	
-	public Map<String, Integer> getChromosomeIterations() {
+	Map<String, Integer> getChromosomeIterations() {
 		return iterationChromosomeMap;
 	}
 	
@@ -66,7 +65,7 @@ class GeneticAlgorithmConfiguration {
 	/**
 	 * @return the iterations
 	 */
-	public int getIterations() {
+	int getIterations() {
 		return iterations;
 	}
 
@@ -94,35 +93,35 @@ class GeneticAlgorithmConfiguration {
 	/**
 	 * @return the crossover
 	 */
-	public double getCrossover() {
+	double getCrossover() {
 		return crossover;
 	}
 
 	/**
 	 * @param crossover the crossover to set
 	 */
-	public void setCrossover(double crossover) {
+	void setCrossover(double crossover) {
 		this.crossover = crossover;
 	}
 
 	/**
 	 * @return the convergence
 	 */
-	public int getConvergence() {
+	int getConvergence() {
 		return convergence;
 	}
 
 	/**
 	 * @param convergence the convergence to set
 	 */
-	public void setConvergence(int convergence) {
+	void setConvergence(int convergence) {
 		this.convergence = convergence;
 	}
 
 	/**
 	 * @return the similarity
 	 */
-	public double getSimilarity() {
+	double getSimilarity() {
 		return similarity;
 	}
 
@@ -150,14 +149,14 @@ class GeneticAlgorithmConfiguration {
 	/**
 	 * @return the size
 	 */
-	public int getSize() {
+	int getSize() {
 		return size;
 	}
 
 	/**
 	 * @param size the size to set
 	 */
-	public void setSize(int size) {
+	void setSize(int size) {
 		this.size = size;
 	}
 
@@ -171,19 +170,19 @@ class GeneticAlgorithmConfiguration {
 	/**
 	 * @param initMutation the initMutation to set
 	 */
-	public void setInitMutation(double initMutation) {
+	void setInitMutation(double initMutation) {
 		this.initMutation = initMutation;
 		this.mutation = initMutation;
 	}
 
-	public String getBestOverallChromosome() {
+	String getBestOverallChromosome() {
         if (bestChromosomeOverall == null)
             return "";
 
 		return bestChromosomeOverall.getChromosome();
 	}
 
-	public void addBestChromosome(String chromosome, Double bestTime) {
+	void addBestChromosome(String chromosome, Double bestTime) {
 		// do not overwrite the original time seen for this chromosome
 		if(bestChromosomesMap.get(chromosome) == null) {
 			this.bestChromosomesMap.put(chromosome, bestTime);
@@ -192,36 +191,36 @@ class GeneticAlgorithmConfiguration {
         }
 	}
 
-    public void updateBestOverall(String chromosome, Double bestTime) {
+    void updateBestOverall(String chromosome, Double bestTime) {
         if(bestChromosomeOverall == null || bestChromosomeOverall.getTime() > bestTime)
 			bestChromosomeOverall = new ChromosomeTimePair(chromosome, bestTime);
 	}
 
-    public void increaseMutationRate(Double v) {
+    void increaseMutationRate(Double v) {
         this.mutation += v;
     }
 
-    public void allowDuplicates() {
+    void allowDuplicates() {
         allowDuplicateGenes = true;
     }
 
-    public void batchMode() {
+    void batchMode() {
         batchProcessing = true;
     }
 
-    public void setWorkingPath() {
+    void setWorkingPath() {
         Scanner scan = new Scanner(System.in);
         System.out.println("Provide the path where the simulation is expecting input and provides output:");
         workingPath = scan.nextLine();
         scan.close();
     }
 
-    public String getWorkingPath() {
+    String getWorkingPath() {
         return workingPath;
     }
 
-    public void setPopulationFitnessValues() {
-        chromosomePopulation.updateFitnessValues();
+    void setPopulationFitnessValues() {
+        chromosomePopulation.updateFitnessValues(getFitnessFile());
     }
 
     public Integer getWinner() {
@@ -245,8 +244,8 @@ class GeneticAlgorithmConfiguration {
         }
     }
 
-    private void reproduction(int[] winners, int loser, boolean allowDup, int[][] population) {
-        int[] child;
+    private void reproduction(Integer[] winners, int loser, boolean allowDup, Integer[][] population) {
+        Integer[] child;
         if (allowDup) {
             child = orderOneCrossover(population[winners[0]], population[winners[1]]);
         } else {
@@ -285,7 +284,7 @@ class GeneticAlgorithmConfiguration {
         if(!parentLengthsOk(parent1, parent2)) return null;
 
         int l = parent1.length;
-        ParentIndices parentIndices = new ParentIndices(rand.nextInt(l), rand.nextInt(l));
+        CrossoverParentIndices parentIndices = new CrossoverParentIndices(rand.nextInt(l), rand.nextInt(l));
 
         // create the child .. initial elements are -1
         Integer[] child = new Integer[l];
@@ -328,7 +327,7 @@ class GeneticAlgorithmConfiguration {
         return child;
     }
 
-    private int[] orderOneCrossover(Integer[] parent1, Integer[] parent2) {
+    private Integer[] orderOneCrossover(Integer[] parent1, Integer[] parent2) {
         int l = parent1.length;
         if (l != parent2.length) {
             System.err.println("parents must have equal lengths");
@@ -365,10 +364,10 @@ class GeneticAlgorithmConfiguration {
         return updated;
     }
 
-    private int[] getWinners(Double winnerSimilarityRatio, int[][] population, int convergenceFactor) {
+    private Integer[] getWinners(Double winnerSimilarityRatio, Integer[][] population, int convergenceFactor) {
         int numTournament = 2;
         // winning gene positions, the start of binary selection
-        int[] winners = new int[numTournament];
+        Integer[] winners = new int[numTournament];
 
         int tempConverge = convergenceFactor;
         double diffCount = 0;
@@ -389,8 +388,8 @@ class GeneticAlgorithmConfiguration {
             // check similarity, if 2 parents are near identical, then the next
             // child will probably duplicate its parent
             // TL;DR - lets prevent in-breeding
-            int[] winner1 = population[winners[0]];
-            int[] winner2 = population[winners[1]];
+            Integer[] winner1 = population[winners[0]];
+            Integer[] winner2 = population[winners[1]];
             for (int i = 0; i < winner1.length; i++) {
                 if (winner1[i] != winner2[i])
                     diffCount++;

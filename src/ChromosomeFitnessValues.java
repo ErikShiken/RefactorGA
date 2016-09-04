@@ -13,9 +13,10 @@ class ChromosomeFitnessValues {
     private Integer bestChromosome;
     private Integer worstChromosome;
 
-    ChromosomeFitnessValues() {
+    ChromosomeFitnessValues(Integer populationSize) {
         bestChromosome = -1;
         worstChromosome = -1;
+        fitnessValues = new Double[populationSize];
     }
 
     String getWinnerString() {
