@@ -4,8 +4,6 @@
     <list default="true" id="8a9c77bb-9ca6-42e5-b742-984bcfc94e9c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/GeneticAlgorithmConfiguration.java" afterPath="$PROJECT_DIR$/src/GeneticAlgorithmConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/RefactoredGA.java" afterPath="$PROJECT_DIR$/src/RefactoredGA.java" />
     </list>
     <ignored path="RefactorGA.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -485,7 +483,14 @@
       <option name="project" value="LOCAL" />
       <updated>1472941480366</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="- More refactoring (work in progress)">
+      <created>1472952348593</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1472952348593</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
